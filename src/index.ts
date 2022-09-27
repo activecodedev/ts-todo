@@ -2,6 +2,8 @@ import { TodoCollection } from "./todoCollection";
 import { TodoItem } from "./todoItem";
 import { createPromptModule } from "inquirer";
 
+let prompt = createPromptModule();
+
 let todos: TodoItem[] = [
    new TodoItem(1, "Kupić kwiaty"),
    new TodoItem(2, "Odebrać buty"),
@@ -18,14 +20,44 @@ function displayTodoList(): void {
 }
 
 enum Commands {
+   Add = "Dodaj nowe zadanie",
+   Complete = "Wykonanie zadania",
    Toggle = "Pokaż lub ukryj wykonane",
+   Purge = "Usuń wykonane zadania",
    Quit = "Koniec"
+}
+
+function promptAdd(): void {
+   console.clear();
+   prompt({
+      type: "input",
+      name: "add",
+      message: "Podaj zadanie:"
+   }).then(answers => {
+      if (answers["add"] !== "")
+         collection.addTodo(answers["add"]);
+
+      promptUser();
+   });
+}
+
+function promptComplete(): void {
+   console.clear();
+   prompt({
+      type: "checkbox",
+      name: "complete",
+      message: "Oznaczenie zadań jako wykonanych",
+      choices: collection.getTodoItems(showCompleted).map(item => ({ name: item.task, value: item.id, checked: item.complete }))
+   }).then(answers => {
+      let completedTasks = answers["complete"] as number[];
+      collection.getTodoItems(true).forEach(item => collection.markComplete(item.id, completedTasks.find(id => id === item.id) != undefined));
+      promptUser();
+   })
 }
 
 function promptUser(): void {
    console.clear();
    displayTodoList();
-   let prompt = createPromptModule();
    prompt({
       type: "list",
       name: "command",
@@ -37,7 +69,21 @@ function promptUser(): void {
             showCompleted = !showCompleted;
             promptUser();
             break;
-      
+         case Commands.Add:
+            promptAdd();
+            break;
+         case Commands.Complete:
+            if (collection.getItemCounts().incomplete > 0) {
+               promptComplete();
+            } else {
+               promptUser();
+            }
+            break;
+         case Commands.Purge:
+            collection.removeComplete();
+            promptUser();
+            break;
+
          default:
             break;
       }
