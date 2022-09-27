@@ -1,5 +1,6 @@
 import { TodoCollection } from "./todoCollection";
 import { TodoItem } from "./todoItem";
+import { createPromptModule } from "inquirer";
 
 let todos: TodoItem[] = [
    new TodoItem(1, "Kupić kwiaty"),
@@ -9,12 +10,38 @@ let todos: TodoItem[] = [
 ];
 
 let collection: TodoCollection = new TodoCollection("Adam", todos);
+let showCompleted = true;
 
-console.clear();
-console.log(`Lista ${collection.userName}a ` + `(liczba zadań pozostałych do zrobienia: ${collection.getItemCounts().incomplete})`);
+function displayTodoList(): void {
+   console.log(`Lista ${collection.userName}a ` + `(liczba zadań pozostałych do zrobienia: ${collection.getItemCounts().incomplete})`);
+   collection.getTodoItems(showCompleted).forEach(item => item.printDetails());
+}
 
-// collection.removeComplete();
-collection.getTodoItems(true).forEach(item => item.printDetails());
-// let newId: number = collection.addTodo("Iść pobiegać");
-// let todoItem: TodoItem = collection.getTodoById(newId);
-// todoItem.printDetails();
+enum Commands {
+   Toggle = "Pokaż lub ukryj wykonane",
+   Quit = "Koniec"
+}
+
+function promptUser(): void {
+   console.clear();
+   displayTodoList();
+   let prompt = createPromptModule();
+   prompt({
+      type: "list",
+      name: "command",
+      message: "Wybierz opcję",
+      choices: Object.values(Commands),
+   }).then(answers => {
+      switch (answers["command"]) {
+         case Commands.Toggle:
+            showCompleted = !showCompleted;
+            promptUser();
+            break;
+      
+         default:
+            break;
+      }
+   })
+}
+
+promptUser();
