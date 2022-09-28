@@ -1,0 +1,29 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "task": "Kupić kwiaty",
+      "complete": true
+    },
+    {
+      "id": 2,
+      "task": "Odebrać buty",
+      "complete": false
+    },
+    {
+      "id": 3,
+      "task": "Zamówić bilety",
+      "complete": false
+    },
+    {
+      "id": 4,
+      "task": "Zadzwonić do Janka",
+      "complete": true
+    },
+    {
+      "id": 5,
+      "task": "Nowe zadanie",
+      "complete": true
+    }
+  ]
+}

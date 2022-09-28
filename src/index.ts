@@ -1,6 +1,7 @@
-import { TodoCollection } from "./todoCollection";
-import { TodoItem } from "./todoItem";
+import { TodoCollection } from "./todoCollection.js";
+import { TodoItem } from "./todoItem.js";
 import { createPromptModule } from "inquirer";
+import { JsonTodoCollection } from "./jsonTodoCollection.js";
 
 let prompt = createPromptModule();
 
@@ -11,7 +12,8 @@ let todos: TodoItem[] = [
    new TodoItem(4, "Zadzwonić do Janka", true)
 ];
 
-let collection: TodoCollection = new TodoCollection("Adam", todos);
+// let collection: TodoCollection = new TodoCollection("Adam", todos);
+let collection: TodoCollection = new JsonTodoCollection("Adam", todos);
 let showCompleted = true;
 
 function displayTodoList(): void {
